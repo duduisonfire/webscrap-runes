@@ -18,15 +18,15 @@ namespace webscrap_runes.webscrap
         private async Task<string> ScrapRunePage()
         {
             BrowserFetcher browserFetch = new();
-            _ = await browserFetch.DownloadAsync(BrowserFetcher.DefaultChromiumRevision);
+            await browserFetch.DownloadAsync(BrowserFetcher.DefaultChromiumRevision);
 
-            IBrowser browser = await Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
+            var browser = await Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
 
-            IPage page = await browser.NewPageAsync();
+            var page = await browser.NewPageAsync();
             await page.SetRequestInterceptionAsync(true);
             page.Request += RequestRules!;
 
-            _ = await page.GoToAsync(
+            await page.GoToAsync(
                 $"https://u.gg/lol/champions/{champion}/build/{lane}?rank=overall",
                 WaitUntilNavigation.DOMContentLoaded
             );
@@ -39,22 +39,20 @@ namespace webscrap_runes.webscrap
         private async Task<List<List<string>>> SelectRunesFromPage()
         {
             string content = await ScrapRunePage();
-            IBrowsingContext context = BrowsingContext.New(Configuration.Default);
-            AngleSharp.Dom.IDocument document = await context.OpenAsync(
-                req => req.Content(content)
-            );
+            var context = BrowsingContext.New(Configuration.Default);
+            var document = await context.OpenAsync(req => req.Content(content));
 
-            List<string> treeNameList = document
+            var treeNameList = document
                 .QuerySelectorAll(".perk-style-title")
                 .Select(e => e.InnerHtml)
                 .ToList();
 
-            List<string> majorRuneList = document
+            var majorRuneList = document
                 .QuerySelectorAll(".perk-active")
                 .Select(e => e.FirstElementChild!.GetAttribute("alt")!)
                 .ToList();
 
-            List<string> minorsRuneList = document
+            var minorsRuneList = document
                 .QuerySelectorAll(".shard-active")
                 .Select(e => e.FirstElementChild!.GetAttribute("alt")!)
                 .ToList();
@@ -65,21 +63,21 @@ namespace webscrap_runes.webscrap
 
         public async Task GetRunes()
         {
-            List<List<string>> runesLists = await SelectRunesFromPage();
+            var runesLists = await SelectRunesFromPage();
 
             for (int i = 0; i < 2; i++)
             {
-                _ = runeList.Add(runesLists[0][i]);
+                runeList.Add(runesLists[0][i]);
             }
 
             for (int i = 0; i < 6; i++)
             {
-                _ = runeList.Add(runesLists[1][i]);
+                runeList.Add(runesLists[1][i]);
             }
 
             for (int i = 0; i < 3; i++)
             {
-                _ = runeList.Add(runesLists[2][i]);
+                runeList.Add(runesLists[2][i]);
             }
         }
 
