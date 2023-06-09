@@ -5,9 +5,9 @@ namespace webscrap_runes.webscrap
 {
     public class WebScrap
     {
-        private readonly HashSet<string> runeList = new();
-        private readonly string? champion;
-        private readonly string? lane;
+        public readonly HashSet<string> runeList = new();
+        private readonly string champion;
+        private readonly string lane;
 
         public WebScrap(string champion, string lane)
         {
@@ -17,7 +17,7 @@ namespace webscrap_runes.webscrap
 
         private async Task<string> ScrapRunePage()
         {
-            BrowserFetcher browserFetch = new();
+            var browserFetch = new BrowserFetcher();
             await browserFetch.DownloadAsync(BrowserFetcher.DefaultChromiumRevision);
 
             var browser = await Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
