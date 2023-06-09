@@ -5,7 +5,7 @@ namespace webscrap_runes.webscrap
 {
     public class WebScrap
     {
-        public HashSet<string> runeList = new();
+        private readonly HashSet<string> runeList = new();
         private readonly string? champion;
         private readonly string? lane;
 
